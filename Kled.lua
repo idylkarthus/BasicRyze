@@ -7,6 +7,8 @@ TITANICSLOT = nil
 TIAMAT = false
 TIAMATSLOT = nil
 Mount = true
+smite = nil
+ignite = nil
 local VP = VPrediction()
 
 function OnLoad()
@@ -17,6 +19,7 @@ function OnLoad()
     Config.combo:addParam("comboQ", "Use Gun Q in combo", SCRIPT_PARAM_ONOFF, true)
     Config.combo:addParam("comboE1", "Use First (E) dash in combo", SCRIPT_PARAM_ONOFF, true)
     Config.combo:addParam("comboE2", "Use Second(E) dash in combo", SCRIPT_PARAM_ONOFF, true)
+    Config.combo:addParam("delayE", "Always Delay First (E)", SCRIPT_PARAM_ONOFF, true)
     Config:addParam("harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("X"))
     Config:addSubMenu("Harass", "poke")
     Config.poke:addParam("harassQm", "Use Mounted (Q) in harass", SCRIPT_PARAM_ONOFF, false)
@@ -46,9 +49,15 @@ function OnTick()
 		Harass()
 	end
 	RSteal()
-	ignitedmg = 50 + 20*myHero.level
+	smiteDmg = 20 + 8 * myHero.level
+	igniteDmg = 50 + 20*myHero.level
+	if smite == nil then
+		smite = Slot("S5_SummonerSmitePlayerGanker")
+	else
+		ksSmite()
+	end
 	if ignite == nil then
-		smite = Slot("SummonerDot")
+		ignite = Slot("SummonerDot")
 	else
 		ksIgnite()
 	end
@@ -57,6 +66,17 @@ function OnTick()
 	end
 end
 
+function ksSmite()
+    if smite then
+        for i, enemy in pairs(GetEnemyHeroes()) do
+            if ValidTarget(enemy, 500) then
+                if enemy.health < smiteDmg then
+                    CastSpell(smite, enemy)
+                end
+            end
+        end
+    end
+end
 
 function ksIgnite()
     if ignite then
@@ -169,7 +189,7 @@ function Combo()
 			end
 		end
 		--TargetHaveBuff("kledqmark", target) == false 
-		if myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 550 and GetSpellData(_Q).currentCd > 0 and ((GetSpellData(_Q).currentCd < GetSpellData(_Q).cd-0.75) or GetSpellData(_W).currentCd > 0)then
+		if myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 550 and GetSpellData(_Q).currentCd > 0 and (GetSpellData(_Q).currentCd < GetSpellData(_Q).cd-0.65 or (GetDistance(Target) > 125 and Config.combo.delayE == false))then
 			if Config.combo.comboE1 == true and myHero:GetSpellData(_E).name == "KledE" then
 				CastE(Target)
 			end
@@ -204,7 +224,7 @@ function GetQDamage(unit)
 		local QDmgMod = 0.60
 		local DmgRaw = QDmg[Qlvl] + (myHero.damage * QDmgMod)
 		local Dmg = myHero:CalcDamage(unit, DmgRaw)
-		return Dmg
+		return Dmg	
 	elseif myHero:GetSpellData(_Q).name == "KledRiderQ" then
 		local Qlvl = myHero:GetSpellData(_Q).level
 		if Qlvl < 1 then return 0 end
@@ -253,22 +273,31 @@ end
 
 function RSteal() 
 	for i,enemy in pairs(GetEnemyHeroes()) do
-    		if not enemy.dead and enemy.visible then
-			if myHero:CanUseSpell(_Q) == READY then
-				if ValidTarget(enemy, 770) then
-					if enemy.health < GetQDamage(enemy) then
-						CastQ(enemy)
-					end
+    	if not enemy.dead and enemy.visible then
+			if myHero:CanUseSpell(_Q) == READY then		
+				if myHero:GetSpellData(_Q).name == "KledQ" and enemy.health < GetQDamage(enemy) and ValidTarget(enemy, 750) then
+					CastQ(enemy)
+				end
+				if myHero:GetSpellData(_Q).name == "KledRiderQ" and enemy.health < GetQDamage(enemy) and ValidTarget(enemy, 700) then
+					CastQ(enemy)
+				end
+			end
+			if myHero:CanUseSpell(_E) == READY then
+				if myHero:GetSpellData(_E).name == "KledE" and enemy.health < GetEDamage(enemy) and ValidTarget(enemy, 550) then
+					CastE(enemy)
+				end
+				if myHero:GetSpellData(_E).name == "KledE2" and enemy.health < GetEDamage(enemy) and ValidTarget(enemy, 625) and TargetHaveBuff("klede2target", enemy)then
+					CastSpell(_E)
 				end
 			end
 			if myHero:CanUseSpell(_E) == READY then
 				if ValidTarget(enemy, 830) then
-					if enemy.health < GetEDamage(enemy)*2 then
-						CastE(enemy)
+						if enemy.health < GetEDamage(enemy)*2 then
+							CastE(enemy)
+						end
 					end
 				end
 			end
-		end
 	end
 end
 
@@ -308,6 +337,9 @@ function OnProcessAttack(unit, attack)
 			if myHero:GetSpellData(_E).name == "KledE2" and myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 625 and TargetHaveBuff("klede2target", Target) and Config.combo.comboE2 == true then
 				--print("Casted After Attack Dash")
 				CastSpell(_E)
+			end
+			if myHero:GetSpellData(_E).name == "KledE" and myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 550 and GetSpellData(_Q).currentCd > 0 and Config.combo.comboE1 == true then
+				CastE(Target)
 			end
 		end
 	end
