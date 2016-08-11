@@ -2,6 +2,7 @@ if myHero.charName ~= "Kled" then return end
 require("UPL")
 UPL = UPL()
 require "VPrediction"
+require 'SacHelper'
 TITANIC = false
 TITANICSLOT = nil
 TIAMAT = false
@@ -77,7 +78,6 @@ function Slot(name)
         return SUMMONER_2
     end
 end
-
 
 
 function OnDraw()
@@ -163,12 +163,14 @@ function Combo()
 		if myHero:CanUseSpell(_Q) == READY and GetDistance(Target) < 750 then
 			if Config.combo.comboQm == true and myHero:GetSpellData(_Q).name == "KledQ" then
 				CastQ(Target)
+				--DelayAction(function() CastE(Target) end, 1.0)
 			end
 			if Config.combo.comboQ == true and myHero:GetSpellData(_Q).name == "KledRiderQ" then
 				CastQ(Target)
 			end
 		end
-		if myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 550 then
+		--TargetHaveBuff("kledqmark", target) == false 
+		if myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 550 and GetSpellData(_Q).currentCd > 0 and ((GetSpellData(_Q).currentCd < GetSpellData(_Q).cd-1) or GetSpellData(_W).currentCd > 0)then
 			if Config.combo.comboE1 == true and myHero:GetSpellData(_E).name == "KledE" then
 				CastE(Target)
 			end
@@ -243,7 +245,8 @@ function CastE(target)
 		if CastPosition and HitChance > 0 and myHero:CanUseSpell(_E) == READY then
 			CastSpell(_E, CastPosition.x, CastPosition.z)
 		end
-	elseif myHero:GetSpellData(_E).name == "KledE2" and myHero:CanUseSpell(_E) == READY and GetDistance(target) < 625 then
+	elseif myHero:GetSpellData(_E).name == "KledE2" and myHero:CanUseSpell(_E) == READY and GetDistance(target) < 625 and TargetHaveBuff("klede2target", target) and (GetSpellData(_W).currentCd > 0 or GetDistance(target) > 125) then
+		--print("Casted Fuck the Attack Dash")
 		CastSpell(_E)
 	end
 end
@@ -255,14 +258,14 @@ function RSteal()
 			if myHero:CanUseSpell(_Q) == READY then
 				if ValidTarget(enemy, 770) then
 					if enemy.health < GetQDamage(enemy) then
-						CastQ(target)
+						CastQ(enemy)
 					end
 				end
 			end
 			if myHero:CanUseSpell(_E) == READY then
 				if ValidTarget(enemy, 830) then
 					if enemy.health < GetEDamage(enemy)*2 then
-						CastE(target)
+						CastE(enemy)
 					end
 				end
 			end
@@ -272,7 +275,7 @@ end
 
 
 function OnUpdateBuff(Src, Buff, iStacks)
-	if Src == myHero then
+	if Src == Target then
 		--print(Buff.name)
 	end
 end
@@ -294,4 +297,23 @@ function OnProcessSpell(unit, spell)
 	if unit == myHero then
 		--print(spell.name)
 	end
+	--print(spell.name)
+end
+function OnProcessAttack(unit, attack)
+	if unit == myHero then
+			--print(attack.name)
+	end
+	if unit == myHero and (attack.name == "KledWAttack1" or attack.name == "KledWAttack2" or attack.name == "KledWAttack3" or attack.name == "KledWAttack4" or attack.name == "KledBasicAttack" or attack.name == "KledBasicAttack2" or attack.name == "KledBasicAttack3") then
+		--print("Attacked")
+		if Target then
+			if myHero:GetSpellData(_E).name == "KledE2" and myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 625 and TargetHaveBuff("klede2target", Target) and Config.combo.comboE2 == true then
+				--print("Casted After Attack Dash")
+				CastSpell(_E)
+			end
+		end
+	end
+end
+
+function OnCastSpell(iSpell, startPos, endPos, Target)
+    --print(iSpell)
 end
