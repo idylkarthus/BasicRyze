@@ -2,7 +2,6 @@ if myHero.charName ~= "Kled" then return end
 require("UPL")
 UPL = UPL()
 require "VPrediction"
-require 'SacHelper'
 TITANIC = false
 TITANICSLOT = nil
 TIAMAT = false
