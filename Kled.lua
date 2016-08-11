@@ -245,7 +245,7 @@ function CastE(target)
 		if CastPosition and HitChance > 0 and myHero:CanUseSpell(_E) == READY then
 			CastSpell(_E, CastPosition.x, CastPosition.z)
 		end
-	elseif myHero:GetSpellData(_E).name == "KledE2" and myHero:CanUseSpell(_E) == READY and GetDistance(target) < 625 and TargetHaveBuff("klede2target", target) and (GetSpellData(_W).currentCd > 0 or GetDistance(target) > 125) then
+	elseif myHero:GetSpellData(_E).name == "KledE2" and myHero:CanUseSpell(_E) == READY and GetDistance(target) < 625 and TargetHaveBuff("klede2target", target) and GetDistance(target) > 125 then
 		print("Casted Fuck the Attack Dash")
 		CastSpell(_E)
 	end
