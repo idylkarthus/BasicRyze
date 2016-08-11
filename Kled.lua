@@ -10,7 +10,7 @@ Mount = true
 local VP = VPrediction()
 
 function OnLoad()
-    Config = scriptConfig("Jarvan Dude", "JJ")
+    Config = scriptConfig("Kled Beta", "JJ")
     Config:addParam("shoot", "Combo", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("C"))
     Config:addSubMenu("Combo", "combo")
     Config.combo:addParam("comboQm", "Use Mounted Q in combo", SCRIPT_PARAM_ONOFF, true)
