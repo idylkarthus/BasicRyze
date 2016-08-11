@@ -290,14 +290,7 @@ function RSteal()
 					CastSpell(_E)
 				end
 			end
-			if myHero:CanUseSpell(_E) == READY then
-				if ValidTarget(enemy, 830) then
-						if enemy.health < GetEDamage(enemy)*2 then
-							CastE(enemy)
-						end
-					end
-				end
-			end
+		end
 	end
 end
 
