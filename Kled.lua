@@ -170,7 +170,7 @@ function Combo()
 			end
 		end
 		--TargetHaveBuff("kledqmark", target) == false 
-		if myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 550 and GetSpellData(_Q).currentCd > 0 and ((GetSpellData(_Q).currentCd < GetSpellData(_Q).cd-0.5) or GetSpellData(_W).currentCd > 0)then
+		if myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 550 and GetSpellData(_Q).currentCd > 0 and ((GetSpellData(_Q).currentCd < GetSpellData(_Q).cd-0.75) or GetSpellData(_W).currentCd > 0)then
 			if Config.combo.comboE1 == true and myHero:GetSpellData(_E).name == "KledE" then
 				CastE(Target)
 			end
