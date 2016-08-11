@@ -170,7 +170,7 @@ function Combo()
 			end
 		end
 		--TargetHaveBuff("kledqmark", target) == false 
-		if myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 550 and GetSpellData(_Q).currentCd > 0 and ((GetSpellData(_Q).currentCd < GetSpellData(_Q).cd-1) or GetSpellData(_W).currentCd > 0)then
+		if myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 550 and GetSpellData(_Q).currentCd > 0 and ((GetSpellData(_Q).currentCd < GetSpellData(_Q).cd-0.5) or GetSpellData(_W).currentCd > 0)then
 			if Config.combo.comboE1 == true and myHero:GetSpellData(_E).name == "KledE" then
 				CastE(Target)
 			end
@@ -246,7 +246,7 @@ function CastE(target)
 			CastSpell(_E, CastPosition.x, CastPosition.z)
 		end
 	elseif myHero:GetSpellData(_E).name == "KledE2" and myHero:CanUseSpell(_E) == READY and GetDistance(target) < 625 and TargetHaveBuff("klede2target", target) and (GetSpellData(_W).currentCd > 0 or GetDistance(target) > 125) then
-		--print("Casted Fuck the Attack Dash")
+		print("Casted Fuck the Attack Dash")
 		CastSpell(_E)
 	end
 end
@@ -307,7 +307,7 @@ function OnProcessAttack(unit, attack)
 		--print("Attacked")
 		if Target then
 			if myHero:GetSpellData(_E).name == "KledE2" and myHero:CanUseSpell(_E) == READY and GetDistance(Target) < 625 and TargetHaveBuff("klede2target", Target) and Config.combo.comboE2 == true then
-				--print("Casted After Attack Dash")
+				print("Casted After Attack Dash")
 				CastSpell(_E)
 			end
 		end
