@@ -10,7 +10,8 @@ Mount = true
 smite = nil
 ignite = nil
 local VP = VPrediction()
-
+-- Credits to hentai, for the usage of two items, and possibly the damage calculation method, although I couldn't get him
+-- to clarify what code was his inbetween the insults.
 function OnLoad()
     Config = scriptConfig("Kled Beta", "JJ")
     Config:addParam("shoot", "Combo", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("C"))
