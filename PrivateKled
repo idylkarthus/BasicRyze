@@ -199,7 +199,7 @@ function OnDraw()
 		DrawCircleMinimap(myHero.x-50, myHero.y, myHero.z, 4800, 2, ARGB(255,255,255,255), 20)
 	end
 end
-
+-- Credits to hentai, for the usage of two items, and possibly the damage calculation method
 function FindSlotByName(name)
   	if name ~= nil then
     	for i=0, 12 do
